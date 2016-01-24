@@ -1,0 +1,28 @@
+import scrapy
+from newegg.items import NeweggItem
+class NeweggSpider(scrapy.Spider):
+    name = "newegg"
+    allowed_domains = ["newegg.com"]
+    start_urls = [
+        "http://www.newegg.com/Desktop-Computers/SubCategory/ID-10?Tid=19096&Pagesize=90"
+    ]
+    x="http://www.newegg.com/Desktop-Computers/SubCategory/ID-10/Page-"
+    y="?Tid=19096&Pagesize=90"
+    for i in range(2,101):
+	start_urls.append(x + str(i) + y)
+
+    def parse(self, response):
+        links=[]
+	for sel in range(1,91):
+		item=NeweggItem()
+		x='//*[@id="cellItem'
+		y='"]/div[2]/div/a/@href'
+		item['url']=response.xpath(x + str(sel) + y).extract()
+		links.append(item['url'])
+	fo=open("/media/raghu/DATA/newegg mining/Product Lists.txt","a")
+	for item in links:
+		print>>fo, item
+	fo.close()
+
+
+
